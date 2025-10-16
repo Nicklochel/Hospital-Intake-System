@@ -1,0 +1,74 @@
+class DoctorNode:
+    def __init__(self, name):
+        self.name = name
+        self.left = None
+        self.right = None
+
+
+class DoctorTree:
+    def __init__(self):
+        self.root = None
+
+    def _find(self, node, name):
+        """Helper to find a node by name."""
+        if node is None:
+            return None
+        if node.name == name:
+            return node
+        left_result = self._find(node.left, name)
+        if left_result:
+            return left_result
+        return self._find(node.right, name)
+
+    def insert(self, parent_name, employee_name, side):
+        parent_node = self._find(self.root, parent_name)
+        if not parent_node:
+            print(f"Parent {parent_name} not found.")
+            return False
+        new_node = DoctorNode(employee_name)
+        if side.lower() == "left":
+            if parent_node.left is None:
+                parent_node.left = new_node
+                return True
+            else:
+                print("Left side already occupied.")
+                return False
+        elif side.lower() == "right":
+            if parent_node.right is None:
+                parent_node.right = new_node
+                return True
+            else:
+                print("Right side already occupied.")
+                return False
+        else:
+            print("Invalid side, choose 'left' or 'right'.")
+            return False
+
+    def preorder(self, node):
+        if node is None:
+            return []
+        return [node.name] + self.preorder(node.left) + self.preorder(node.right)
+
+    def inorder(self, node):
+        if node is None:
+            return []
+        return self.inorder(node.left) + [node.name] + self.inorder(node.right)
+
+    def postorder(self, node):
+        if node is None:
+            return []
+        return self.postorder(node.left) + self.postorder(node.right) + [node.name]
+
+
+# Example Usage
+if __name__ == "__main__":
+    tree = DoctorTree()
+    tree.root = DoctorNode("Dr. Croft")
+    tree.insert("Dr. Croft", "Dr. Goldsmith", "right")
+    tree.insert("Dr. Croft", "Dr. Phan", "left")
+    tree.insert("Dr. Phan", "Dr. Carson", "right")
+    tree.insert("Dr. Phan", "Dr. Morgan", "left")
+
+    print("Preorder:", tree.preorder(tree.root))
+    print("Inorder:", tree.inorder(tree.root))
+    print("Postorder:", tree.postorder(tree.root))
